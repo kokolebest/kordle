@@ -1,0 +1,6 @@
+.app {
+  width: min(100%, 520px);
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
