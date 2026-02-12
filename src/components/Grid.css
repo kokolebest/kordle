@@ -1,0 +1,59 @@
+.grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+}
+
+.row {
+    display: flex;
+    gap: 5px;
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 62px;
+    height: 62px;
+    border: 2px solid #636569;
+
+    font-size: 2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    transition: background-color 0.15s ease;
+}
+
+.cell-correct {
+    background-color: #538d4e;
+    border-color: #538d4e;
+}
+
+.cell-present {
+    background-color: #b59f3b;
+    border-color: #b59f3b;
+}
+
+.cell-absent {
+    background-color: #3a3a3c;
+    border-color: #3a3a3c;
+}
+
+.cell:not(:empty) {
+    animation: pop 0.1s ease;
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

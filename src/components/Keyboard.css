@@ -1,0 +1,39 @@
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 8px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.keyboard-key {
+    font-weight: bold;
+    border: 0;
+    height: 58px;
+    cursor: pointer;
+    background-color: #818384;
+    color: white;
+    flex: 1;
+    text-transform: uppercase;
+}
+
+.keyboard-key.correct {
+    background-color: #538d4e;
+}
+
+.keyboard-key.present {
+    background-color: #b59f3b;
+}
+
+.keyboard-key.absent {
+    background-color: #3a3a3c;
+}
