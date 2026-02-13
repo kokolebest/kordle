@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./mainMenuModal.css";
 
-const MainMenuModal = ({col, isMenuOpen}) => {
+const MainMenuModal = ({col}) => {
 
     const handleChange = (e) => {
         col = e.target.value
