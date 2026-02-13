@@ -1,0 +1,19 @@
+.mainMenu {
+    background-color: #242424;
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    margin: auto;
+    border-radius: 5px;
+    width: 200px;
+    height: 200px;
+    border: 3px solid #818384;
+}
+
+.btn-main-menu {
+    margin-top: 2rem;
+}

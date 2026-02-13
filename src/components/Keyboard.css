@@ -6,6 +6,7 @@
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
+    box-sizing: border-box;
 }
 
 .keyboard-row {
@@ -24,6 +25,14 @@
     color: white;
     flex: 1;
     text-transform: uppercase;
+    border-radius: 4px;
+    min-width: 0;
+    padding: 0;
+}
+
+.keyboard-key-wide {
+    flex: 1.5;
+    font-size: 0.8rem;
 }
 
 .keyboard-key.correct {
@@ -36,4 +45,24 @@
 
 .keyboard-key.absent {
     background-color: #3a3a3c;
+}
+
+@media (max-width: 480px) {
+    .keyboard {
+        gap: 6px;
+        padding: 0 6px;
+    }
+
+    .keyboard-row {
+        gap: 4px;
+    }
+
+    .keyboard-key {
+        height: 48px;
+        font-size: 0.82rem;
+    }
+
+    .keyboard-key-wide {
+        font-size: 0.72rem;
+    }
 }

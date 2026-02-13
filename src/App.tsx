@@ -4,12 +4,15 @@ import Grid from "./components/Grid";
 import Keyboard from "./components/Keyboard";
 import { getKeyboardStates } from "./utils";
 import { getRandomWord } from "./wordService";
+import MainMenuModal from "./components/MainMenuModal";
 
 function App() {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [solution, setSolution] = useState("");
   const [isGameOver, setIsGameOver] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [col, setCol] = useState(5);
 
   useEffect(() => {
     const getSolution = async () => {
@@ -33,12 +36,12 @@ function App() {
         if (currentGuess.toLowerCase() === solution) {
           setTimeout(() => {
             alert("T'as gagné!");
-          }, 1000);
+          }, 500);
           setIsGameOver(true);
         } else if (guesses.length === 5) {
           setTimeout(() => {
-            alert(`Yikes tu suces le mot c'était ${solution}!`);
-          }, 1000);
+            alert(`Yikes tu suces le mot était "${solution}"!`);
+          }, 500);
         }
       }
       setCurrentGuess("");
@@ -53,12 +56,16 @@ function App() {
 
   return (
     <div className="app">
+      <button className="btn-menu" onClick={() => setIsMenuOpen(true)}>
+        New game?
+      </button>
       <Grid guesses={guesses} currentGuess={currentGuess} solution={solution} />
       <Keyboard
         isGameOver={isGameOver}
         onKeyPress={handleKeyPress}
         keyboardStates={keyboardStates}
       />
+      {isMenuOpen && <MainMenuModal col={col} />}
     </div>
   );
 }
