@@ -1,10 +1,10 @@
 import { useState } from "react";
 import "./mainMenuModal.css";
 
-const MainMenuModal = ({col}) => {
+const MainMenuModal = ({col, isMenuOpen}) => {
 
     const handleChange = (e) => {
-        col = e.target.value
+        setCol(e.target.value);
     }
 
     return (

@@ -65,7 +65,7 @@ function App() {
         onKeyPress={handleKeyPress}
         keyboardStates={keyboardStates}
       />
-      {isMenuOpen && <MainMenuModal col={col} />}
+      {isMenuOpen && <MainMenuModal col={col} isMenuOpen={isMenuOpen} />}
     </div>
   );
 }
