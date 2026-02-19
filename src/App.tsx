@@ -15,23 +15,25 @@ function App() {
   const [col, setCol] = useState(5);
 
   useEffect(() => {
-    const getSolution = async (col) => {
+    const getSolution = async () => {
       const newSolution = await getRandomWord(col);
-      setSolution(newSolution);
+      if (newSolution) {
+        setSolution(newSolution);
+      }
     };
 
-    getSolution(col);
-  }, []);
+    getSolution();
+  }, [col]);
 
   console.log(solution);
 
   const handleKeyPress = (key: string) => {
-    if (guesses.length === 6) {
+    if (isGameOver || guesses.length === 6) {
       return;
     }
 
     if (key === "ENTER") {
-      if (currentGuess.length === 5) {
+      if (currentGuess.length === col) {
         setGuesses([...guesses, currentGuess]);
         if (currentGuess.toLowerCase() === solution) {
           setTimeout(() => {
@@ -42,22 +44,22 @@ function App() {
           setTimeout(() => {
             alert(`Yikes tu suces le mot était "${solution}"!`);
           }, 500);
+          setIsGameOver(true);
         }
       }
       setCurrentGuess("");
     } else if (key === "BACKSPACE") {
       setCurrentGuess((prev) => prev.slice(0, -1));
-    } else if (currentGuess.length < 5) {
+    } else if (currentGuess.length < col) {
       setCurrentGuess((prev) => prev + key);
     }
   };
 
-  const handleNewGame = async () => {
-    setIsMenuOpen(false);
+  const handleNewGame = (nextCol: number) => {
+    setCol(nextCol);
     setCurrentGuess("");
     setGuesses([]);
-    const newSolution = await getRandomWord(col);
-    setSolution(newSolution);
+    setIsGameOver(false);
   };
 
   const keyboardStates = getKeyboardStates(guesses, solution);
@@ -78,9 +80,7 @@ function App() {
         onKeyPress={handleKeyPress}
         keyboardStates={keyboardStates}
       />
-      {isMenuOpen && (
-        <MainMenuModal col={col} setCol={setCol} handleClick={handleNewGame} />
-      )}
+      {isMenuOpen && <MainMenuModal col={col} handleClick={handleNewGame} />}
     </div>
   );
 }

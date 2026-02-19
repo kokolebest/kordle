@@ -21,7 +21,7 @@ const Grid = ({ guesses, currentGuess, solution, col }) => {
         .fill()
         .map((_, rowIndex) => {
           const isComplete = guesses.length > rowIndex;
-          const states = isComplete ? getLetterStates(allGuesses[rowIndex], solution) : Array(5).fill('');
+          const states = isComplete ? getLetterStates(allGuesses[rowIndex], solution) : Array(cols).fill('');
           return (
             <div key={rowIndex} className="row">
               {Array(cols)
