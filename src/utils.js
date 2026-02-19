@@ -1,9 +1,10 @@
 export const getLetterStates = (guess, solution) => {
-  if (!guess || !solution) return Array(5).fill("");
+  const wordLength = solution?.length || guess?.length || 0;
+  if (!guess || !solution) return Array(wordLength).fill("");
 
   const solutionChars = [...solution.toUpperCase()];
   const guessChars = [...guess.toUpperCase()];
-  const states = Array(5).fill("absent");
+  const states = Array(wordLength).fill("absent");
 
   //mark green
 

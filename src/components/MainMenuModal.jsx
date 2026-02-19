@@ -12,9 +12,11 @@ const MainMenuModal = ({col, handleClick}) => {
     <div className="mainMenu">
       <h4>longeur du mot à deviner</h4>
       <select value={selectedCol} onChange={handleChange}>
-        <option value={4}>4</option>
         <option value={5}>5</option>
         <option value={6}>6</option>
+        <option value={7}>7</option>
+        <option value={8}>8</option>
+        <option value={9}>9</option>
       </select>
       <button className="btn-main-menu" onClick={() => handleClick(selectedCol)}>
         GO!

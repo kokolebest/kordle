@@ -55,11 +55,16 @@ function App() {
     }
   };
 
-  const handleNewGame = (nextCol: number) => {
+  const handleNewGame = async (nextCol: number) => {
     setCol(nextCol);
     setCurrentGuess("");
     setGuesses([]);
     setIsGameOver(false);
+    setIsMenuOpen(false);
+    const newSolution = await getRandomWord(col);
+    if (newSolution) {
+      setSolution(newSolution);
+    }
   };
 
   const keyboardStates = getKeyboardStates(guesses, solution);
