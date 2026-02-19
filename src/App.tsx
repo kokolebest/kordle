@@ -15,12 +15,12 @@ function App() {
   const [col, setCol] = useState(5);
 
   useEffect(() => {
-    const getSolution = async () => {
-      const newSolution = await getRandomWord();
+    const getSolution = async (col) => {
+      const newSolution = await getRandomWord(col);
       setSolution(newSolution);
     };
 
-    getSolution();
+    getSolution(col);
   }, []);
 
   console.log(solution);
@@ -52,6 +52,14 @@ function App() {
     }
   };
 
+  const handleNewGame = async () => {
+    setIsMenuOpen(false);
+    setCurrentGuess("");
+    setGuesses([]);
+    const newSolution = await getRandomWord(col);
+    setSolution(newSolution);
+  };
+
   const keyboardStates = getKeyboardStates(guesses, solution);
 
   return (
@@ -59,13 +67,20 @@ function App() {
       <button className="btn-menu" onClick={() => setIsMenuOpen(true)}>
         New game?
       </button>
-      <Grid guesses={guesses} currentGuess={currentGuess} solution={solution} />
+      <Grid
+        guesses={guesses}
+        currentGuess={currentGuess}
+        solution={solution}
+        col={col}
+      />
       <Keyboard
         isGameOver={isGameOver}
         onKeyPress={handleKeyPress}
         keyboardStates={keyboardStates}
       />
-      {isMenuOpen && <MainMenuModal col={col} isMenuOpen={isMenuOpen} />}
+      {isMenuOpen && (
+        <MainMenuModal col={col} setCol={setCol} handleClick={handleNewGame} />
+      )}
     </div>
   );
 }

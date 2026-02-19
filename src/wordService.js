@@ -1,7 +1,7 @@
-export const getRandomWord = async () => {
+export const getRandomWord = async (col) => {
   try {
     const response = await fetch(
-      "https://random-word-api.herokuapp.com/word?length=5",
+      `https://random-word-api.herokuapp.com/word?length=${col}"`,
     );
 
     const [word] = await response.json();

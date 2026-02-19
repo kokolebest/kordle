@@ -1,7 +1,7 @@
 import { useState } from "react";
-import "./mainMenuModal.css";
+import "./MainMenuModal.css";
 
-const MainMenuModal = ({col, isMenuOpen}) => {
+const MainMenuModal = ({col, setCol, handleClick}) => {
 
     const handleChange = (e) => {
         setCol(e.target.value);
@@ -15,7 +15,7 @@ const MainMenuModal = ({col, isMenuOpen}) => {
                 <option value="5">5</option>
                 <option value="6">6</option>
             </select>
-            <button class="btn-main-menu" onClick={() => setIsMenuOpen(false)}>GO!</button>
+            <button className="btn-main-menu" onClick={handleClick}>GO!</button>
 
         </div>
     );

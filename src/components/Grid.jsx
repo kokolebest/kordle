@@ -1,10 +1,12 @@
 import "./Grid.css";
 import {getLetterStates} from "../utils";
 
-const rows = 6;
-const cols = 5;
 
-const Grid = ({ guesses, currentGuess, solution }) => {
+
+const Grid = ({ guesses, currentGuess, solution, col }) => {
+  const rows = 6;
+  const cols = col;
+
   const allGuesses = [...guesses];
   if (currentGuess) {
     allGuesses.push(currentGuess);
