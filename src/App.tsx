@@ -12,8 +12,10 @@ type RoundStatus = "typing" | "waiting_for_both" | "revealed";
 type PlayerRoundState = {
   guesses: string[];
   currentGuess: string;
+  lockedGuess: string;
   solution: string;
   submitted: boolean;
+  outcome: "playing" | "won" | "lost";
 };
 
 type PlayersState = Record<PlayerId, PlayerRoundState>;
@@ -23,8 +25,10 @@ const PLAYER_IDS: PlayerId[] = ["left", "right"];
 const createInitialPlayerState = (): PlayerRoundState => ({
   guesses: [],
   currentGuess: "",
+  lockedGuess: "",
   solution: "",
   submitted: false,
+  outcome: "playing",
 });
 
 const createInitialPlayersState = (): PlayersState => ({
@@ -39,7 +43,7 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [col, setCol] = useState(5);
   const [roundStatus, setRoundStatus] = useState<RoundStatus>("typing");
-  const [roundNumber, setRoundNumber] = useState(1);
+  const [currentRow, setCurrentRow] = useState(0);
 
   useEffect(() => {
     const getSolutions = async () => {
@@ -52,21 +56,66 @@ function App() {
         left: {
           guesses: [],
           currentGuess: "",
+          lockedGuess: "",
           solution: leftSolution || "",
           submitted: false,
+          outcome: "playing",
         },
         right: {
           guesses: [],
           currentGuess: "",
+          lockedGuess: "",
           solution: rightSolution || "",
           submitted: false,
+          outcome: "playing",
         },
       });
+      setCurrentRow(0);
       setRoundStatus("typing");
     };
 
     getSolutions();
-  }, [col, roundNumber]);
+  }, [col]);
+
+  useEffect(() => {
+    if (roundStatus !== "revealed") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setPlayers((previousPlayers) => {
+        const updatedPlayers: PlayersState = {
+          left: { ...previousPlayers.left },
+          right: { ...previousPlayers.right },
+        };
+
+        PLAYER_IDS.forEach((playerId) => {
+          const player = previousPlayers[playerId];
+          const lastGuess = player.guesses.at(-1)?.toLowerCase();
+          const won = player.outcome === "won" || lastGuess === player.solution;
+          const lost =
+            player.outcome === "lost" || (!won && player.guesses.length >= 6);
+
+          updatedPlayers[playerId] = {
+            ...player,
+            currentGuess: "",
+            lockedGuess: "",
+            submitted: false,
+            outcome: won ? "won" : lost ? "lost" : "playing",
+          };
+        });
+
+        return updatedPlayers;
+      });
+
+      setCurrentRow((previousRow) => previousRow + 1);
+      setRoundStatus("typing");
+    }, 300);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [roundStatus]);
 
   const handleKeyPress = (playerId: PlayerId, key: string) => {
     setPlayers((previousPlayers) => {
@@ -74,7 +123,11 @@ function App() {
         return previousPlayers;
       }
       const activePlayer = previousPlayers[playerId];
-      if (activePlayer.submitted || activePlayer.guesses.length === 6) {
+      if (
+        activePlayer.submitted ||
+        activePlayer.outcome !== "playing" ||
+        activePlayer.guesses.length === 6
+      ) {
         return previousPlayers;
       }
 
@@ -87,7 +140,7 @@ function App() {
           ...previousPlayers,
           [playerId]: {
             ...activePlayer,
-            guesses: [...activePlayer.guesses, activePlayer.currentGuess],
+            lockedGuess: activePlayer.currentGuess,
             currentGuess: "",
             submitted: true,
           },
@@ -98,27 +151,25 @@ function App() {
         );
         setRoundStatus(bothSubmitted ? "revealed" : "waiting_for_both");
 
-        if (bothSubmitted) {
-          const leftWon =
-            updatedPlayers.left.guesses.at(-1)?.toLowerCase() ===
-            updatedPlayers.left.solution;
-          const rightWon =
-            updatedPlayers.right.guesses.at(-1)?.toLowerCase() ===
-            updatedPlayers.right.solution;
-
-          setTimeout(() => {
-            if (leftWon && rightWon) {
-              alert("Both players solved their word!");
-            } else if (leftWon) {
-              alert("Left player wins this round!");
-            } else if (rightWon) {
-              alert("Right player wins this round!");
-            } else {
-              alert("No one solved their word this round.");
-            }
-          }, 300);
+        if (!bothSubmitted) {
+          return updatedPlayers;
         }
-        return updatedPlayers;
+        return {
+          left: {
+            ...updatedPlayers.left,
+            guesses: [
+              ...updatedPlayers.left.guesses,
+              updatedPlayers.left.lockedGuess,
+            ],
+          },
+          right: {
+            ...updatedPlayers.right,
+            guesses: [
+              ...updatedPlayers.right.guesses,
+              updatedPlayers.right.lockedGuess,
+            ],
+          },
+        };
       }
       if (key === "BACKSPACE") {
         return {
@@ -146,18 +197,10 @@ function App() {
 
   const handleNewGame = (nextCol: number) => {
     setCol(nextCol);
-    setRoundNumber(1);
+    setCurrentRow(0);
     setRoundStatus("typing");
     setPlayers(createInitialPlayersState());
     setIsMenuOpen(false);
-  };
-
-  const handleNextRound = () => {
-    if (roundStatus !== "revealed") {
-      return;
-    }
-
-    setRoundNumber((previousRound) => previousRound + 1);
   };
 
   const keyboardStates = useMemo(
@@ -173,12 +216,13 @@ function App() {
       <button className="btn-menu" onClick={() => setIsMenuOpen(true)}>
         New game?
       </button>
-      <p>Round {roundNumber}</p>
+      <p>Row {currentRow + 1}</p>
       <p>Status: {roundStatus}</p>
 
       {PLAYER_IDS.map((playerId) => (
         <section key={playerId}>
           <h2>{playerId === "left" ? "Left player" : "Right player"}</h2>
+          <p>Outcome: {players[playerId].outcome}</p>
           <Grid
             guesses={players[playerId].guesses}
             currentGuess={players[playerId].currentGuess}
@@ -187,19 +231,15 @@ function App() {
           />
           <Keyboard
             isGameOver={
-              players[playerId].submitted || roundStatus === "revealed"
+              players[playerId].submitted ||
+              roundStatus === "revealed" ||
+              players[playerId].outcome !== "playing"
             }
             onKeyPress={(key: string) => handleKeyPress(playerId, key)}
             keyboardStates={keyboardStates[playerId]}
           />
         </section>
       ))}
-
-      {roundStatus === "revealed" && (
-        <button className="btn-menu" onClick={handleNextRound}>
-          Next round
-        </button>
-      )}
 
       {isMenuOpen && <MainMenuModal col={col} handleClick={handleNewGame} />}
     </div>
