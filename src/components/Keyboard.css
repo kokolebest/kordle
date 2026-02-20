@@ -66,3 +66,8 @@
         font-size: 0.72rem;
     }
 }
+.keyboard-active {
+    outline: 2px solid rgb(83 141 78 / 45%);
+    outline-offset: 2px;
+    border-radius: 8px;
+}

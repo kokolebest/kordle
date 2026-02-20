@@ -40,6 +40,7 @@ function App() {
   const [players, setPlayers] = useState<PlayersState>(
     createInitialPlayersState,
   );
+  const [activePlayerId, setActivePlayerId] = useState<PlayerId>("left");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [col, setCol] = useState(5);
   const [roundStatus, setRoundStatus] = useState<RoundStatus>("typing");
@@ -72,6 +73,7 @@ function App() {
       });
       setCurrentRow(0);
       setRoundStatus("typing");
+      setActivePlayerId("left");
     };
 
     getSolutions();
@@ -201,6 +203,7 @@ function App() {
     setRoundStatus("typing");
     setPlayers(createInitialPlayersState());
     setIsMenuOpen(false);
+    setActivePlayerId("left");
   };
 
   const keyboardStates = useMemo(
@@ -220,7 +223,13 @@ function App() {
       <p>Status: {roundStatus}</p>
 
       {PLAYER_IDS.map((playerId) => (
-        <section key={playerId}>
+        <section
+          key={playerId}
+          className={`player-panel ${activePlayerId === playerId ? "player-panel-active" : ""}`}
+          onClick={() => setActivePlayerId(playerId)}
+          onFocusCapture={() => setActivePlayerId(playerId)}
+          tabIndex={0}
+        >
           <h2>{playerId === "left" ? "Left player" : "Right player"}</h2>
           <p>Outcome: {players[playerId].outcome}</p>
           <Grid
@@ -228,14 +237,17 @@ function App() {
             currentGuess={players[playerId].currentGuess}
             solution={players[playerId].solution}
             col={col}
+            isActive={activePlayerId === playerId}
           />
           <Keyboard
+            playerId={playerId}
+            activePlayerId={activePlayerId}
             isGameOver={
               players[playerId].submitted ||
               roundStatus === "revealed" ||
               players[playerId].outcome !== "playing"
             }
-            onKeyPress={(key: string) => handleKeyPress(playerId, key)}
+            onKeyPress={handleKeyPress}
             keyboardStates={keyboardStates[playerId]}
           />
         </section>

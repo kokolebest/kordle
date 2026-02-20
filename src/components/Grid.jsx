@@ -1,9 +1,9 @@
 import "./Grid.css";
-import {getLetterStates} from "../utils";
+import { getLetterStates } from "../utils";
 
 
 
-const Grid = ({ guesses, currentGuess, solution, col }) => {
+const Grid = ({ guesses, currentGuess, solution, col, isActive }) => {
   const rows = 6;
   const cols = col;
 
@@ -12,16 +12,18 @@ const Grid = ({ guesses, currentGuess, solution, col }) => {
     allGuesses.push(currentGuess);
   }
   while (allGuesses.length < rows) {
-    allGuesses.push('');
+    allGuesses.push("");
   }
 
   return (
-    <div className="grid">
+    <div className={`grid ${isActive ? "grid-active" : ""}`}>
       {Array(rows)
         .fill()
         .map((_, rowIndex) => {
           const isComplete = guesses.length > rowIndex;
-          const states = isComplete ? getLetterStates(allGuesses[rowIndex], solution) : Array(cols).fill('');
+          const states = isComplete
+            ? getLetterStates(allGuesses[rowIndex], solution)
+            : Array(cols).fill("");
           return (
             <div key={rowIndex} className="row">
               {Array(cols)
@@ -30,7 +32,10 @@ const Grid = ({ guesses, currentGuess, solution, col }) => {
                   const letter = allGuesses[rowIndex]?.[colIndex] || "";
                   const letterState = states[colIndex];
                   return (
-                    <div key={`${rowIndex}-${colIndex}`} className={`cell cell-${letterState}`}>
+                    <div
+                      key={`${rowIndex}-${colIndex}`}
+                      className={`cell cell-${letterState}`}
+                    >
                       {letter}
                     </div>
                   );
